@@ -17,7 +17,7 @@ export class YoutubeService {
   private apikey: string = 'AIzaSyByPksOk_yBISRzp-x0k51ZxNbd8OrzE90';
   private playlist: string = 'UUuaPTYj15JSkETGnEseaFFg';
   
-  private nextPageToken: string="";
+  private nextPageToken: string;
   constructor( public http: HttpClient) { }
 
     getVideos() {
@@ -27,13 +27,17 @@ export class YoutubeService {
       params = params.append( 'maxResults' , '10' );
       params = params.append( 'playlistId' , this.playlist );
       params = params.append( 'key' , this.apikey );
-
+      if (this.nextPageToken) {
+        console.log(this.nextPageToken);
+        params = params.append( 'pageToken' , this.nextPageToken );
+      }
 
       return this.http.get(url, { params: params} )
         .pipe(
           map(data => {
             console.log(data);
-            this.nextPageToken = JSON.stringify(data['nextPageToken']);
+            //this.nextPageToken = JSON.stringify(data['nextPageToken']);
+            this.nextPageToken = data['nextPageToken'];
             console.log (this.nextPageToken);
             let videos:any[]=[];
             for(let video of data['items']){
